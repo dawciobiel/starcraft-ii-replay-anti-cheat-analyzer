@@ -1,6 +1,8 @@
-# 🛡️ StarCraft II Replay Anti-Cheat Analyzer
+![StarCraft II Replay Anti-Cheat Analyzer Banner](banner.png)
 
-Wykrywaj podejrzane zachowania w powtórkach StarCraft II. Analizuj ruchy kamery, pozycje budynków i jednostek, by zidentyfikować potencjalnych oszustów.
+# 🎮 StarCraft II Replay Anti-Cheat Analyzer
+
+Narzędzie open-source do wykrywania maphacka i podejrzanych zachowań w powtórkach StarCraft II. Analizuje ruchy kamery, pozycje jednostek i struktur, generuje alerty i wizualizacje. Stworzone z myślą o uczciwej rywalizacji, trenerach, casterach i fanach e-sportu.
 
 ## 🎯 Cel projektu
 
