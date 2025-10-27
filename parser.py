@@ -97,7 +97,7 @@ def parse_replay(replay_path):
     print("Replay parsed and data saved to SQLite.")
 
 if __name__ == "__main__":
-    replay_file = "example_replays/game.SC2Replay"
+    replay_file = "replays/game.SC2Replay"
     if os.path.exists(replay_file):
         parse_replay(replay_file)
     else:
