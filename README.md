@@ -13,14 +13,16 @@ To narzędzie służy do analizy plików .SC2Replay w celu wykrywania oznak uży
 
 ## 🧱 Struktura projektu
 
+```log
 starcraft-ii-replay-anti-cheat-analyzer/  
 ├── parser/              - Eksport danych z replaya do SQLite  
 ├── analyzer/            - Moduły analizy anty-cheat  
 ├── visualizer/          - Wizualizacje XY, heatmapy, timeline  
 ├── schema.sql           - Schemat bazy danych SQLite  
-├── example_replays/     - Przykładowe pliki .SC2Replay  
+├── replays/             - Pliki .SC2Replay  
 ├── README.md            - Ten plik  
 └── requirements.txt     - Zależności Pythona
+```
 
 ## ⚙️ Jak to działa?
 
@@ -47,19 +49,19 @@ starcraft-ii-replay-anti-cheat-analyzer/
 
 Zainstaluj zależności:  
 ```bash
-  pip install -r requirements.txt
+   pip install -r requirements.txt
 ```
 
 ## 🧪 Przykład użycia
 
 ### Parsuj replay i uruchom analizę
-`python cli.py example_replays/game.SC2Replay --analyze`
+`   python cli.py replays/game.SC2Replay --analyze`
 
 ### Parsuj replay i pokaż wizualizację kamery gracza #1
-`python cli.py example_replays/game.SC2Replay --visualize 1`
+`   python cli.py replays/game.SC2Replay --visualize 1`
 
 ### Tylko parsuj replay
-`python cli.py example_replays/game.SC2Replay`
+`   python cli.py replays/game.SC2Replay`
 
 ## 📜 Licencja
 
