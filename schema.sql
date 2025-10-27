@@ -1,0 +1,76 @@
+-- schema.sql
+
+-- 🧑 Players
+CREATE TABLE players (
+    player_id INTEGER PRIMARY KEY,
+    name TEXT NOT NULL,
+    race TEXT,
+    team TEXT,
+    color TEXT
+);
+
+-- 🕒 Timeline
+CREATE TABLE timeline (
+    timeline_id INTEGER PRIMARY KEY,
+    tick INTEGER,
+    second REAL
+);
+
+-- 🏠 Structures
+CREATE TABLE structures (
+    structure_id INTEGER PRIMARY KEY,
+    player_id INTEGER,
+    name TEXT,
+    x INTEGER,
+    y INTEGER,
+    elevation_level INTEGER,
+    is_flying BOOLEAN,
+    timeline_id INTEGER,
+    FOREIGN KEY(player_id) REFERENCES players(player_id),
+    FOREIGN KEY(timeline_id) REFERENCES timeline(timeline_id)
+);
+
+-- 🧍 Units
+CREATE TABLE units (
+    unit_id INTEGER PRIMARY KEY,
+    player_id INTEGER,
+    name TEXT,
+    x INTEGER,
+    y INTEGER,
+    hp INTEGER,
+    shield INTEGER,
+    energy INTEGER,
+    timeline_id INTEGER,
+    FOREIGN KEY(player_id) REFERENCES players(player_id),
+    FOREIGN KEY(timeline_id) REFERENCES timeline(timeline_id)
+);
+
+-- 🎥 Camera Events
+CREATE TABLE camera_events (
+    camera_id INTEGER PRIMARY KEY,
+    player_id INTEGER,
+    x INTEGER,
+    y INTEGER,
+    timeline_id INTEGER,
+    FOREIGN KEY(player_id) REFERENCES players(player_id),
+    FOREIGN KEY(timeline_id) REFERENCES timeline(timeline_id)
+);
+
+-- 🧪 Upgrades (optional)
+CREATE TABLE upgrades (
+    upgrade_id INTEGER PRIMARY KEY,
+    player_id INTEGER,
+    name TEXT,
+    completed_at INTEGER,
+    FOREIGN KEY(player_id) REFERENCES players(player_id)
+);
+
+-- 🚨 Alerts (generated during analysis)
+CREATE TABLE alerts (
+    alert_id INTEGER PRIMARY KEY,
+    player_id INTEGER,
+    tick INTEGER,
+    type TEXT,
+    description TEXT,
+    FOREIGN KEY(player_id) REFERENCES players(player_id)
+);
