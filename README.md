@@ -48,6 +48,17 @@ Zainstaluj zależności:
   pip install -r requirements.txt
 ```
 
+## 🧪 Przykład użycia
+
+### Parsuj replay i uruchom analizę
+`python cli.py example_replays/game.SC2Replay --analyze`
+
+### Parsuj replay i pokaż wizualizację kamery gracza #1
+`python cli.py example_replays/game.SC2Replay --visualize 1`
+
+### Tylko parsuj replay
+`python cli.py example_replays/game.SC2Replay`
+
 ## 📜 Licencja
 
 Projekt open-source, dostępny za darmo dla społeczności SC2. Licencja: GNU GPL 3.0.
