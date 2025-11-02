@@ -1,2 +1,2 @@
-sc2reader==1.6.0
+sc2reader
 matplotlib>=3.5.0

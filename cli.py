@@ -20,16 +20,22 @@ def main():
         print("❌ Plik replay nie istnieje.")
         return
 
-    print("📥 Parsowanie replaya...")
-    parse_replay(args.replay)
+    analysis_dir = "replays-analysis"
+    os.makedirs(analysis_dir, exist_ok=True)
+
+    replay_name = os.path.splitext(os.path.basename(args.replay))[0]
+    db_path = os.path.join(analysis_dir, f"{replay_name}.db")
+
+    print(f"📥 Parsowanie replaya i zapis do: {db_path}")
+    parse_replay(args.replay, db_path)
 
     if args.analyze:
         print("🔍 Uruchamiam analizę maphacka...")
-        analyze_maphack()
+        analyze_maphack(db_path)
 
     if args.visualize is not None:
         print(f"📊 Wizualizacja ruchów kamery gracza #{args.visualize}...")
-        plot_camera_movements(player_id=args.visualize)
+        plot_camera_movements(player_id=args.visualize, db_path=db_path)
 
 if __name__ == "__main__":
     main()

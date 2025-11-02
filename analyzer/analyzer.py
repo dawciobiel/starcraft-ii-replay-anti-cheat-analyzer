@@ -3,14 +3,13 @@
 import sqlite3
 import math
 
-DB_PATH = "replay_data.db"
 SUSPICIOUS_TIME_LIMIT = 30  # sekundy
 
 def distance(x1, y1, x2, y2):
     return math.sqrt((x2 - x1)**2 + (y2 - y1)**2)
 
-def analyze_maphack():
-    conn = sqlite3.connect(DB_PATH)
+def analyze_maphack(db_path):
+    conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
 
     # Pobierz wszystkich graczy
@@ -22,7 +21,7 @@ def analyze_maphack():
         SELECT s.player_id, s.x, s.y, t.second
         FROM structures s
         JOIN timeline t ON s.timeline_id = t.timeline_id
-        WHERE t.second <= ?
+        WHERE t.second <= ? AND s.name IN ('CommandCenter', 'OrbitalCommand', 'PlanetaryFortress', 'Nexus', 'Hatchery', 'Lair', 'Hive')
     """, (SUSPICIOUS_TIME_LIMIT,))
     bases = cursor.fetchall()
 
@@ -56,4 +55,4 @@ def analyze_maphack():
     print("Analiza zakończona. Alerty zapisane w bazie.")
 
 if __name__ == "__main__":
-    analyze_maphack()
+    analyze_maphack("replay_data.db")

@@ -3,10 +3,8 @@
 import sqlite3
 import matplotlib.pyplot as plt
 
-DB_PATH = "replay_data.db"
-
-def plot_camera_movements(player_id, show_enemy_bases=True):
-    conn = sqlite3.connect(DB_PATH)
+def plot_camera_movements(player_id, db_path, show_enemy_bases=True):
+    conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
 
     # Pozycje kamery
@@ -51,4 +49,4 @@ def plot_camera_movements(player_id, show_enemy_bases=True):
     plt.show()
 
 if __name__ == "__main__":
-    plot_camera_movements(player_id=1)
+    plot_camera_movements(player_id=1, db_path="replay_data.db")
