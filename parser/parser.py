@@ -1,8 +1,13 @@
 import sc2reader
+from sc2reader.engine.plugins import APMTracker
 import sqlite3
 import os
 
 def init_db(db_path):
+    db_dir = os.path.dirname(db_path)
+    if db_dir and not os.path.exists(db_dir):
+        os.makedirs(db_dir)
+
     if os.path.exists(db_path):
         os.remove(db_path)
     with open("schema.sql", "r") as f:
@@ -12,7 +17,39 @@ def init_db(db_path):
     conn.commit()
     return conn
 
+def calculate_epm(replay, player_pid):
+    player_events = [e for e in replay.events if hasattr(e, 'player') and e.player.pid == player_pid]
+
+    effective_actions = []
+    last_command = None
+    last_command_time = -1
+
+    for event in player_events:
+        if event.name in ('TargetPointCommandEvent', 'TargetUnitCommandEvent', 'AbilityEvent'):
+            is_redundant = (
+                last_command and
+                event.name == last_command.name and
+                event.ability_name == last_command.ability_name and
+                event.second - last_command_time < 0.5
+            )
+
+            if not is_redundant:
+                effective_actions.append(event)
+                last_command = event
+                last_command_time = event.second
+
+    epm_data = {}
+    game_length_minutes = replay.game_length.seconds // 60
+    for minute in range(game_length_minutes):
+        actions_in_minute = [e for e in effective_actions if minute * 60 <= e.second < (minute + 1) * 60]
+        epm = len(actions_in_minute)
+        for second in range(minute * 60, (minute + 1) * 60):
+            epm_data[second] = epm
+
+    return epm_data
+
 def parse_replay(replay_path, db_path):
+    sc2reader.engine.register_plugin(APMTracker())
     replay = sc2reader.load_replay(replay_path, load_level=4)
     conn = init_db(db_path)
     cursor = conn.cursor()
@@ -20,16 +57,19 @@ def parse_replay(replay_path, db_path):
     # Players
     for player in replay.players:
         cursor.execute("""
-            INSERT INTO players (player_id, name, race, team, color)
-            VALUES (?, ?, ?, ?, ?)
-        """, (player.pid, player.name, player.play_race, player.team.number, player.color.hex))
+            INSERT INTO players (player_id, name, toon_id, bnet_url, race, team, color)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+        """, (player.pid, player.name, getattr(player, 'toon_id', None), getattr(player, 'url', None), player.play_race, player.team.number, player.color.hex))
 
     # Timeline
     tick_map = {}
+    second_to_timeline_id = {}
     for i, event in enumerate(replay.tracker_events):
         tick = event.frame
         second = event.second
         tick_map[tick] = i + 1
+        if second not in second_to_timeline_id:
+            second_to_timeline_id[second] = i + 1
         cursor.execute("INSERT INTO timeline (timeline_id, tick, second) VALUES (?, ?, ?)", (i + 1, tick, second))
 
     # Initial Structures
@@ -107,13 +147,35 @@ def parse_replay(replay_path, db_path):
                 event.second
             ))
 
+    # Command Events
+    for event in replay.events:
+        if event.name in ('TargetPointCommandEvent', 'TargetUnitCommandEvent'):
+            cursor.execute("""
+                INSERT INTO command_events (player_id, timeline_id, x, y, ability_name, target_unit_id)
+                VALUES (?, ?, ?, ?, ?, ?)
+            """, (
+                event.player.pid,
+                tick_map.get(event.frame, 0),
+                event.location[0],
+                event.location[1],
+                event.ability_name,
+                getattr(event, 'target_unit_id', None)
+            ))
+
+    # Player APM
+    for player in replay.players:
+        epm_data = calculate_epm(replay, player.pid)
+        for second, apm in player.apm.items():
+            timeline_id = second_to_timeline_id.get(second)
+            if timeline_id:
+                epm = epm_data.get(second, 0)
+                cursor.execute("""
+                    INSERT INTO player_apm (player_id, timeline_id, apm, epm)
+                    VALUES (?, ?, ?, ?)
+                """, (player.pid, timeline_id, round(apm), epm))
+
     conn.commit()
     conn.close()
     print("Replay parsed and data saved to SQLite.")
 
-if __name__ == "__main__":
-    replay_file = "replays/game.SC2Replay"
-    if os.path.exists(replay_file):
-        parse_replay(replay_file, "replay_data.db")
-    else:
-        print("Replay file not found.")
+# This script is intended to be used as a module.

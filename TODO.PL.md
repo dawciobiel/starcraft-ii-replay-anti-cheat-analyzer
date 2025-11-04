@@ -1,0 +1,12 @@
+# TODO
+
+## Architektura kodu
+
+- Architektura kodu powinna być zaprojektowana w taki sposób, aby umożliwić łatwe dodawanie dodatkowych reguł anty-cheat, zapewniając, że każda implementacja reguł nie będzie kolidować z innymi.
+
+## Funkcjonalności
+
+- Aplikacje powinny być dostępne lokalnie za pomocą linii poleceń.
+- Aplikacje powinny być dostępne lokalnie za pomocą prostego interfejsu graficznego.
+- Aplikacja powinna mieć możliwość zdalnej obsługi za pomocą protokołu HTTP/HTTPS.
+- Zaimplementuj reguły anty-cheat opisane w katalogu `docs/detection_procedures/`.

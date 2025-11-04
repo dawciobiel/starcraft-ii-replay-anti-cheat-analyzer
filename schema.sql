@@ -4,6 +4,8 @@
 CREATE TABLE players (
     player_id INTEGER PRIMARY KEY,
     name TEXT NOT NULL,
+    toon_id INTEGER,
+    bnet_url TEXT,
     race TEXT,
     team TEXT,
     color TEXT
@@ -73,4 +75,28 @@ CREATE TABLE alerts (
     type TEXT,
     description TEXT,
     FOREIGN KEY(player_id) REFERENCES players(player_id)
+);
+
+-- 🎯 Command Events
+CREATE TABLE command_events (
+    command_id INTEGER PRIMARY KEY,
+    player_id INTEGER,
+    timeline_id INTEGER,
+    x INTEGER,
+    y INTEGER,
+    ability_name TEXT,
+    target_unit_id INTEGER,
+    FOREIGN KEY(player_id) REFERENCES players(player_id),
+    FOREIGN KEY(timeline_id) REFERENCES timeline(timeline_id)
+);
+
+-- 📈 Player APM
+CREATE TABLE player_apm (
+    apm_id INTEGER PRIMARY KEY,
+    player_id INTEGER,
+    timeline_id INTEGER,
+    apm INTEGER,
+    epm INTEGER,
+    FOREIGN KEY(player_id) REFERENCES players(player_id),
+    FOREIGN KEY(timeline_id) REFERENCES timeline(timeline_id)
 );
