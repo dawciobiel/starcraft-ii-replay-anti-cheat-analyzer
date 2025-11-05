@@ -8,7 +8,7 @@ SUSPICIOUS_TIME_LIMIT = 30  # sekundy
 def distance(x1, y1, x2, y2):
     return math.sqrt((x2 - x1)**2 + (y2 - y1)**2)
 
-def analyze_maphack(db_path):
+def analyze_maphack(db_path, output_dir):
     conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
 
@@ -54,5 +54,4 @@ def analyze_maphack(db_path):
     conn.close()
     print("Analiza zakończona. Alerty zapisane w bazie.")
 
-if __name__ == "__main__":
-    analyze_maphack("replay_data.db")
+# This script is intended to be used as a module.
