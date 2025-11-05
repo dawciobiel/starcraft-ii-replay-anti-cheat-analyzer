@@ -6,7 +6,7 @@ import datetime
 import configparser
 import sqlite3
 from parser.parser import parse_replay
-from analyzer.analyzer import analyze_maphack
+from analyzer.analyzer import analyze_replay
 from visualizer.visualizer import plot_camera_movements
 
 def main():
@@ -51,8 +51,8 @@ def main():
     parse_replay(args.replay, db_path)
 
     if args.analyze:
-        print("🔍 Uruchamiam analizę maphacka...")
-        analyze_maphack(db_path, current_analysis_dir)
+        print("🔍 Uruchamiam analizę...")
+        analyze_replay(db_path, current_analysis_dir)
 
     if args.visualize:
         print("📊 Generowanie wizualizacji ruchów kamery dla wszystkich graczy...")

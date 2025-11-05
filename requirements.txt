@@ -1,2 +1,4 @@
-sc2reader
+sc2reader==1.8.0
+requests
+beautifulsoup4
 matplotlib>=3.5.0

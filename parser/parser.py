@@ -122,9 +122,11 @@ def parse_replay(replay_path, db_path):
                 tick_map.get(event.frame, 0)
             ))
 
-    # Camera Events
+    # Events (Camera, Selection)
+    last_camera_positions = {}
     for event in replay.events:
         if event.name == "CameraEvent":
+            last_camera_positions[event.player.pid] = (event.x, event.y)
             cursor.execute("""
                 INSERT INTO camera_events (player_id, x, y, timeline_id)
                 VALUES (?, ?, ?, ?)
@@ -134,6 +136,21 @@ def parse_replay(replay_path, db_path):
                 event.y,
                 tick_map.get(event.frame, 0))
             )
+
+        elif event.name == "SelectionEvent":
+            if event.new_units and all(unit.owner != event.player for unit in event.new_units):
+                camera_pos = last_camera_positions.get(event.player.pid, (None, None))
+                selected_unit_ids = ",".join([str(unit.id) for unit in event.new_units])
+                cursor.execute("""
+                    INSERT INTO selection_events (player_id, timeline_id, selected_unit_ids, camera_x, camera_y)
+                    VALUES (?, ?, ?, ?, ?)
+                """, (
+                    event.player.pid,
+                    tick_map.get(event.frame, 0),
+                    selected_unit_ids,
+                    camera_pos[0],
+                    camera_pos[1]
+                ))
 
     # Upgrades
     for event in replay.tracker_events:

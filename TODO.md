@@ -10,5 +10,8 @@
 - Applications should be accessible locally via a simple graphical interface.
 - The application should be able to be operated remotely via the HTTP/HTTPS protocol.
 - Implement the anti-cheat rules described in the `docs/detection_procedures/` directory.
+- Implemented `unnatural_camera_movement` rule.
+- Implemented `selection_of_unseen_units` rule.
+- Implemented `camera_movement_to_unseen_enemy` rule.
 
 

@@ -100,3 +100,15 @@ CREATE TABLE player_apm (
     FOREIGN KEY(player_id) REFERENCES players(player_id),
     FOREIGN KEY(timeline_id) REFERENCES timeline(timeline_id)
 );
+
+-- 🖱️ Selection Events
+CREATE TABLE selection_events (
+    selection_id INTEGER PRIMARY KEY,
+    player_id INTEGER,
+    timeline_id INTEGER,
+    selected_unit_ids TEXT,
+    camera_x INTEGER,
+    camera_y INTEGER,
+    FOREIGN KEY(player_id) REFERENCES players(player_id),
+    FOREIGN KEY(timeline_id) REFERENCES timeline(timeline_id)
+);
