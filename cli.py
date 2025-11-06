@@ -32,7 +32,7 @@ def main():
 
     # Read configuration
     config = configparser.ConfigParser(interpolation=None)
-    config.read('config.ini')
+    config.read('config/config.ini')
     timestamp_format = config.get('Analyzer', 'TimestampFormat', fallback='%Y-%m-%d_%H-%M-%S')
     default_sanitized_name = config.get('Analyzer', 'DefaultSanitizedName', fallback='unicode_characters_name')
 

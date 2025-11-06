@@ -1,4 +1,4 @@
-![StarCraft II Replay Anti-Cheat Analyzer Banner](banner.png)
+![StarCraft II Replay Anti-Cheat Analyzer Banner](assets/banner.png)
 
 # 🎮 StarCraft II Replay Anti-Cheat Analyzer
 

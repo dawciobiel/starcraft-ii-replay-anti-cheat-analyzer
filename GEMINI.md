@@ -60,3 +60,31 @@ Podsumowanie sesji z dnia 4 listopada 2025:
 
 Podsumowanie sesji z dnia 6 listopada 2025:
 - Obecne testy należy wykonywać na replayu `replays/1v1_TvP.SC2Replay`.
+- **Rozbudowa bazy danych:**
+    - Dodano tabelę `control_group_events` do schematu bazy danych.
+    - Zaimplementowano parsowanie zdarzeń grup kontrolnych (`SetControlGroupEvent`, `AddToControlGroupEvent`, `GetControlGroupEvent`) w `parser/parser_v1_0.py`.
+    - Dodano kolumnę `z` (wysokość) do tabel `units` i `structures` w schemacie bazy danych.
+    - Zaktualizowano `parser/parser_v1_0.py` do bezpiecznego zapisywania współrzędnej `z` dla jednostek i struktur.
+
+- **Refaktoryzacja struktury plików:**
+    - Przeniesiono `schema.sql` do `parser/parser_v1_0_schema.sql` i zmieniono jego nazwę.
+    - Zmieniono nazwę `parser/parser.py` na `parser/parser_v1_0.py`.
+    - Zaktualizowano wszystkie odwołania do tych plików w `cli.py` i `parser/parser_v1_0.py`.
+    - Standaryzowano konwencję nazewniczą dla plików reguł analizatora na `_vX_Y` (np. `_v1_0`), co wymagało zmiany nazw plików i aktualizacji wewnętrznych odwołań.
+
+- **Nowa reguła analizatora:**
+    - Utworzono nową, zaawansowaną regułę `selection_of_unseen_units_with_los_v1_0.py`, która uwzględnia wysokość terenu i uproszczony model linii wzroku (LoS) do wykrywania podejrzanych zaznaczeń niewidocznych jednostek.
+    - Utworzono dokumentację dla tej reguły: `docs/detection_procedures/selection_of_unseen_units_with_los_v1.0.md`.
+    - Skopiowano plik `selection_of_unseen_units_v1.0.json` do katalogu nowej reguły.
+
+- **Naprawa błędów:**
+    - Naprawiono `SyntaxError` w `analyzer/rules/unnatural_camera_movement/unnatural_camera_movement_v1_0.py`.
+    - Naprawiono `IndexError` w `parser/parser_v1_0.py` poprzez bezpieczne odwoływanie się do `unit.location[2]`.
+
+- **Aktualizacja dokumentacji projektu:**
+    - Zaktualizowano `GEMINI.md` o informację o używaniu `replays/1v1_TvP.SC2Replay` do testów.
+    - Zaktualizowano `TODO.md` i `TODO.PL.md`, usuwając zaimplementowane zadania i odzwierciedlając decyzje dotyczące konwencji nazewniczej.
+
+- **Testowanie:**
+    - Pomyślnie przeprowadzono analizę i wizualizację na `replays/1v1_TvP.SC2Replay` oraz na `replays/to_check_is_Jesus_using_mh.SC2Replay`.
+    - Replay `replays/to_check_is_Jesus_using_mh.SC2Replay` wygenerował 16 alertów, co sugeruje, że reguły działają i są w stanie wykrywać potencjalne oszustwa.
