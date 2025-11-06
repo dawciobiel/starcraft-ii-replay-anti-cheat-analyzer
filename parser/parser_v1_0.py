@@ -79,14 +79,14 @@ def parse_replay(replay_path, db_path):
         if unit.is_building and unit.owner and unit.name in ('CommandCenter', 'Nexus', 'Hatchery') and unit.owner.pid not in initial_main_buildings:
             initial_main_buildings.add(unit.owner.pid)
             cursor.execute("""
-                INSERT INTO structures (player_id, name, x, y, elevation_level, is_flying, timeline_id)
+                INSERT INTO structures (player_id, name, x, y, z, is_flying, timeline_id)
                 VALUES (?, ?, ?, ?, ?, ?, ?)
             """, (
                 unit.owner.pid,
                 unit.name,
                 unit.location[0],
                 unit.location[1],
-                None,  # elevation_level (optional)
+                unit.location[2] if len(unit.location) > 2 else None,
                 False,  # is_flying
                 1 # timeline_id for initial structures
             ))
@@ -95,28 +95,29 @@ def parse_replay(replay_path, db_path):
     for event in replay.tracker_events:
         if event.name in ('UnitBornEvent', 'UnitInitEvent') and event.unit.is_building and event.unit.owner:
             cursor.execute("""
-                INSERT INTO structures (player_id, name, x, y, elevation_level, is_flying, timeline_id)
+                INSERT INTO structures (player_id, name, x, y, z, is_flying, timeline_id)
                 VALUES (?, ?, ?, ?, ?, ?, ?)
             """, (
                 event.unit.owner.pid,
                 event.unit.name,
                 event.unit.location[0],
-                                event.unit.location[1],
-                                None,  # elevation_level (optional)
-                                False,  # is_flying
-                                                tick_map.get(event.frame, 0))
-                                            )
+                event.unit.location[1],
+                event.unit.location[2] if len(event.unit.location) > 2 else None,
+                False,  # is_flying
+                tick_map.get(event.frame, 0)
+            ))
     # Units
     for event in replay.tracker_events:
         if event.name == "UnitBornEvent" and not event.unit.is_building and event.unit.owner:
             cursor.execute("""
-                INSERT INTO units (player_id, name, x, y, hp, shield, energy, timeline_id)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                INSERT INTO units (player_id, name, x, y, z, hp, shield, energy, timeline_id)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
             """, (
                 event.unit.owner.pid,
                 event.unit.name,
                 event.unit.location[0],
                 event.unit.location[1],
+                event.unit.location[2] if len(event.unit.location) > 2 else None,
                 getattr(event.unit, "health", None),
                 getattr(event.unit, "shield", None),
                 getattr(event.unit, "energy", None),
