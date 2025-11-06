@@ -6,9 +6,6 @@
 
 ## Funkcjonalności
 
-- Aplikacje powinny być dostępne lokalnie za pomocą linii poleceń.
 - Aplikacje powinny być dostępne lokalnie za pomocą prostego interfejsu graficznego.
 - Aplikacja powinna mieć możliwość zdalnej obsługi za pomocą protokołu HTTP/HTTPS.
 - Zaimplementuj reguły anty-cheat opisane w katalogu `docs/detection_procedures/`.
-- Planowana implementacja wsparcia dla wielu języków (internacjonalizacja - i18n).
-- Zaktualizuj tworzenie wizualizacji: Obecnie plik pokazuje "Enemy Bases", ale bazy sojuszników są również zaznaczone na czerwono jako bazy wrogie. Bazy sojusznicze powinny mieć inny kolor, na przykład żółty lub zielony.

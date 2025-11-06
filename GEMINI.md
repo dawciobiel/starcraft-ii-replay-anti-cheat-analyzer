@@ -88,3 +88,18 @@ Podsumowanie sesji z dnia 6 listopada 2025:
 - **Testowanie:**
     - Pomyślnie przeprowadzono analizę i wizualizację na `replays/1v1_TvP.SC2Replay` oraz na `replays/to_check_is_Jesus_using_mh.SC2Replay`.
     - Replay `replays/to_check_is_Jesus_using_mh.SC2Replay` wygenerował 16 alertów, co sugeruje, że reguły działają i są w stanie wykrywać potencjalne oszustwa.
+
+Podsumowanie sesji z dnia 6 listopada 2025 (kontynuacja):
+- **Refaktoryzacja architektury analizatora:**
+    - Wprowadzono klasę bazową `BaseRule` w `analyzer/analyzer.py`, która definiuje interfejs dla wszystkich reguł analizatora.
+    - Wszystkie istniejące reguły analizatora zostały zmigrowane do nowej architektury opartej na klasie `BaseRule`.
+    - Reguły dziedziczące z `BaseRule` są teraz odpowiedzialne za bezpośrednie wstawianie alertów do bazy danych.
+    - Zaktualizowano proces wykrywania reguł w `analyzer/analyzer.py` w celu identyfikacji reguł opartych na `BaseRule`.
+
+Podsumowanie sesji z dnia 6 listopada 2025 (kontynuacja):
+- **Rozważania nad GUI:**
+    - Zebrano szczegółowe wymagania dotyczące interfejsu graficznego (GUI), w tym docelowych użytkowników, środowiska uruchomieniowego, złożoności interfejsu, wymaganych elementów (formularz wyboru replaya, informacje o replayu, statystyki graczy z build orderem i wykresami).
+    - Omówiono możliwości wizualizacji (obecnie statyczne obrazki, w przyszłości interaktywne mapy).
+    - Przeanalizowano doświadczenie i preferencje technologiczne (Python/PyQt vs Java/JavaFX).
+    - Zaproponowano PyQt jako technologię GUI ze względu na cross-platformowość, bogaty zestaw widżetów, integrację z Pythonem i wydajność.
+    - Punkt dotyczący skalowalności i dostępności (wielu użytkowników vs pojedyncze osoby) został odłożony do dalszego przemyślenia.
