@@ -1,5 +1,5 @@
 Instrukcje dla Gemini:
-- Przed rozpoczęciem pracy (lub przed uruchomieniem aplikacji) należy aktywować środowisko pythona venv projektu.
+- Zawsze sprawdzaj, czy środowisko pythona venv projektu jest aktywne. Jeśli nie, aktywuj je przed rozpoczęciem pracy (lub przed uruchomieniem aplikacji).
 - Komunikuj się w języku polskim.
 - Kod i komentarze w kodzie twórz w języku angielskim.
 
