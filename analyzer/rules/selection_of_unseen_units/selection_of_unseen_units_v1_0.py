@@ -27,6 +27,7 @@ def analyze(db_cursor):
     """
     Analyzes for selection of unseen units.
     """
+    alerts = []
     vision_data = load_vision_ranges()
 
     # Get all selection events of enemy units
@@ -81,9 +82,10 @@ def analyze(db_cursor):
             if not is_visible:
                 db_cursor.execute("SELECT tick FROM timeline WHERE timeline_id = ?", (timeline_id,))
                 tick = db_cursor.fetchone()[0]
-                yield {
+                alerts.append({
                     'player_id': player_id,
                     'tick': tick,
                     'type': 'SelectionOfUnseenUnit',
                     'description': f"Player #{player_id} selected unit {enemy_name} (ID: {selected_unit_id}) which was not in their vision."
-                }
+                })
+    return alerts

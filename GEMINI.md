@@ -57,3 +57,6 @@ Podsumowanie sesji z dnia 4 listopada 2025:
 - Utworzono katalog `docs/detection_procedures` na dokumentację reguł anty-cheat.
 - Utworzono dokumentację dla dwóch reguł anty-cheat: `unnatural_camera_movement.md` i `selection_of_unseen_units.md`.
 - Zaktualizowano `TODO.md` i `TODO.PL.md`, aby wskazywały na nową dokumentację reguł anty-cheat.
+
+Podsumowanie sesji z dnia 6 listopada 2025:
+- Obecne testy należy wykonywać na replayu `replays/1v1_TvP.SC2Replay`.

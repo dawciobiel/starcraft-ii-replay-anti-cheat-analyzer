@@ -14,9 +14,11 @@ def analyze(db_cursor):
     Args:
         db_cursor: A cursor to the parsed replay database.
 
-    Yields:
-        A dictionary representing an alert if suspicious behavior is detected.
+    Returns:
+        A list of dictionaries, each representing an alert if suspicious behavior is detected.
     """
+    alerts = []
+
     # Get all main structures (bases) within the suspicious time limit
     db_cursor.execute("""
         SELECT s.player_id, s.x, s.y, t.second
@@ -41,9 +43,10 @@ def analyze(db_cursor):
             if cam_player != base_player:
                 dist = distance(cam_x, cam_y, base_x, base_y)
                 if dist < 10:  # threshold for suspicious distance
-                    yield {
+                    alerts.append({
                         'player_id': cam_player,
                         'tick': int(cam_sec * 16),  # tick = seconds * 16 (SC2 tickrate)
                         'type': 'UnnaturalCameraMovement',
                         'description': f"Player #{cam_player} camera was {dist:.1f} units from opponent's base #{base_player} at {cam_sec:.1f}s"
-                    }
+                    })
+    return alerts

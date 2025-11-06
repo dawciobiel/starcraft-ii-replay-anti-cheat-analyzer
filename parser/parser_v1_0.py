@@ -10,7 +10,8 @@ def init_db(db_path):
 
     if os.path.exists(db_path):
         os.remove(db_path)
-    with open("schema.sql", "r") as f:
+    schema_path = os.path.join(os.path.dirname(__file__), "parser_v1_0_schema.sql")
+    with open(schema_path, "r") as f:
         schema = f.read()
     conn = sqlite3.connect(db_path)
     conn.executescript(schema)
@@ -150,6 +151,28 @@ def parse_replay(replay_path, db_path):
                     selected_unit_ids,
                     camera_pos[0],
                     camera_pos[1]
+                ))
+
+        elif event.name in ("SetControlGroupEvent", "AddToControlGroupEvent", "GetControlGroupEvent"):
+            action_type = None
+            if event.name == "SetControlGroupEvent":
+                action_type = "set"
+            elif event.name == "AddToControlGroupEvent":
+                action_type = "add"
+            elif event.name == "GetControlGroupEvent":
+                action_type = "get"
+
+            if action_type:
+                selected_unit_ids = ",".join([str(unit.id) for unit in event.units]) if hasattr(event, 'units') else ""
+                cursor.execute("""
+                    INSERT INTO control_group_events (player_id, timeline_id, control_group_id, action, units_selected)
+                    VALUES (?, ?, ?, ?, ?)
+                """, (
+                    event.player.pid,
+                    tick_map.get(event.frame, 0),
+                    event.control_group,
+                    action_type,
+                    selected_unit_ids
                 ))
 
     # Upgrades

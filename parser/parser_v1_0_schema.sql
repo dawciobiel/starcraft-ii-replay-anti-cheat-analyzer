@@ -112,3 +112,15 @@ CREATE TABLE selection_events (
     FOREIGN KEY(player_id) REFERENCES players(player_id),
     FOREIGN KEY(timeline_id) REFERENCES timeline(timeline_id)
 );
+
+-- 👥 Control Group Events
+CREATE TABLE control_group_events (
+    control_group_event_id INTEGER PRIMARY KEY,
+    player_id INTEGER,
+    timeline_id INTEGER,
+    control_group_id INTEGER,
+    action TEXT,
+    units_selected TEXT,
+    FOREIGN KEY(player_id) REFERENCES players(player_id),
+    FOREIGN KEY(timeline_id) REFERENCES timeline(timeline_id)
+);

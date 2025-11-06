@@ -20,6 +20,7 @@ def analyze(db_cursor):
     """
     Analyzes for camera movements to unseen enemy units or structures.
     """
+    alerts = []
     vision_data = load_vision_ranges()
 
     # Get all camera events
@@ -62,9 +63,10 @@ def analyze(db_cursor):
                 if not is_visible:
                     db_cursor.execute("SELECT tick FROM timeline WHERE timeline_id = ?", (timeline_id,))
                     tick = db_cursor.fetchone()[0]
-                    yield {
+                    alerts.append({
                         'player_id': player_id,
                         'tick': tick,
                         'type': 'CameraMovementToUnseenEnemy',
                         'description': f"Player #{player_id} moved camera to unseen enemy {enemy_name} (ID: {enemy_id}) at ({enemy_x}, {enemy_y})."
-                    }
+                    })
+    return alerts

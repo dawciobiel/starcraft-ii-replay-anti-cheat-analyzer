@@ -6,7 +6,6 @@ import json
 import os
 import re
 
-LIQUIPEDIA_URL = "https://liquipedia.net/starcraft2/Vision"
 CONFIG_FILE_NAME = "selection_of_unseen_units_v1.0.json"
 
 def fetch_and_parse_vision_data():

@@ -3,6 +3,7 @@
 ## Architektura kodu
 
 - Architektura kodu powinna być zaprojektowana w taki sposób, aby umożliwić łatwe dodawanie dodatkowych reguł anty-cheat, zapewniając, że każda implementacja reguł nie będzie kolidować z innymi.
+- Standaryzuj konwencję nazewniczą dla plików reguł w `analyzer/rules/` na `_vX_Y` (np. `_v1_0`).
 
 ## Funkcjonalności
 
@@ -14,6 +15,7 @@
 - Zaimplementowano regułę `unnatural_camera_movement`.
 - Zaimplementowano regułę `selection_of_unseen_units`.
 - Zaimplementowano regułę `camera_movement_to_unseen_enemy`.
+- Planowana implementacja wsparcia dla wielu języków (internacjonalizacja - i18n).
 - Zaimplementowano regułę `unnatural_camera_movement`.
 - Zaimplementowano regułę `selection_of_unseen_units`.
 - Zaimplementowano regułę `camera_movement_to_unseen_enemy`.

@@ -5,7 +5,7 @@ import os
 import datetime
 import configparser
 import sqlite3
-from parser.parser import parse_replay
+from parser.parser_v1_0 import parse_replay
 from analyzer.analyzer import analyze_replay
 from visualizer.visualizer import plot_camera_movements
 
