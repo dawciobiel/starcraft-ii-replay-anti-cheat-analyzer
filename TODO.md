@@ -1,6 +1,8 @@
 # TODO
 
 ## Code architecture
+- Consider the eventual use of Nuitka for source code protection.
+- Choose an appropriate license for the project.
 
 
 

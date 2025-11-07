@@ -1,6 +1,8 @@
 # TODO
 
 ## Architektura kodu
+- Zastanów się nad ewentualnym użyciem Nuitka w celu ochrony kodu źródłowego.
+- Wybierz odpowiednią licencję dla projektu.
 
 
 
