@@ -1,3 +1,4 @@
+-- Schema Version: 1.1
 -- schema.sql
 
 -- 🧑 Players
@@ -115,13 +116,139 @@ CREATE TABLE selection_events (
 );
 
 -- 👥 Control Group Events
+
 CREATE TABLE control_group_events (
+
     control_group_event_id INTEGER PRIMARY KEY,
+
     player_id INTEGER,
+
     timeline_id INTEGER,
+
     control_group_id INTEGER,
+
     action TEXT,
+
     units_selected TEXT,
+
     FOREIGN KEY(player_id) REFERENCES players(player_id),
+
     FOREIGN KEY(timeline_id) REFERENCES timeline(timeline_id)
+
 );
+
+
+
+-- 📊 Player Stats Events
+
+
+
+CREATE TABLE player_stats_events (
+
+
+
+    stats_id INTEGER PRIMARY KEY,
+
+
+
+    player_id INTEGER,
+
+
+
+    timeline_id INTEGER,
+
+
+
+    minerals_collection_rate INTEGER,
+
+
+
+    vespene_collection_rate INTEGER,
+
+
+
+    workers_active_count INTEGER,
+
+
+
+    food_used INTEGER,
+
+
+
+    food_made INTEGER,
+
+
+
+    FOREIGN KEY(player_id) REFERENCES players(player_id),
+
+
+
+    FOREIGN KEY(timeline_id) REFERENCES timeline(timeline_id)
+
+
+
+);
+
+
+
+
+
+
+
+-- 💀 Unit Deaths
+
+
+
+CREATE TABLE unit_deaths (
+
+
+
+    death_id INTEGER PRIMARY KEY,
+
+
+
+    unit_id INTEGER,
+
+
+
+    killer_id INTEGER,
+
+
+
+    player_id INTEGER, -- Owner of the unit that died
+
+
+
+    timeline_id INTEGER,
+
+
+
+    unit_name TEXT,
+
+
+
+    x INTEGER,
+
+
+
+    y INTEGER,
+
+
+
+    FOREIGN KEY(player_id) REFERENCES players(player_id),
+
+
+
+    FOREIGN KEY(killer_id) REFERENCES players(player_id),
+
+
+
+    FOREIGN KEY(timeline_id) REFERENCES timeline(timeline_id)
+
+
+
+);
+
+
+
+

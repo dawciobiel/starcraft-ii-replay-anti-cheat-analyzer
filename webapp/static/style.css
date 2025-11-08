@@ -1,0 +1,41 @@
+body {
+    font-family: sans-serif;
+    margin: 2em;
+    background-color: #f4f4f4;
+    color: #333;
+}
+
+h1, h2 {
+    color: #333;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1em;
+}
+
+th, td {
+    padding: 8px 12px;
+    border: 1px solid #ccc;
+    text-align: left;
+}
+
+th {
+    background-color: #e4e4e4;
+}
+
+tr:nth-child(even) {
+    background-color: #fdfdfd;
+}
+
+a {
+    display: inline-block;
+    margin-top: 1em;
+    text-decoration: none;
+    color: #0066cc;
+}
+
+a:hover {
+    text-decoration: underline;
+}

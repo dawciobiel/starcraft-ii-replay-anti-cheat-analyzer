@@ -1,18 +1,16 @@
+
 import os
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, send_from_directory
 from werkzeug.utils import secure_filename
-import datetime
-import configparser
-import sqlite3
 import sys
 
 # Add the root directory to the Python path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-from parser.parser_v1_0 import parse_replay
-from analyzer.analyzer import analyze_replay
+from core.analysis_service import run_full_analysis
 
 UPLOAD_FOLDER = os.path.join(os.path.abspath(os.path.dirname(__file__)), '..', 'replays')
+ANALYSIS_FOLDER = os.path.join(os.path.abspath(os.path.dirname(__file__)), '..', 'replays-analysis')
 ALLOWED_EXTENSIONS = {'sc2replay'}
 
 app = Flask(__name__)
@@ -38,35 +36,24 @@ def upload_file():
         replay_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
         file.save(replay_path)
 
-        # --- Analysis Logic ---
-        base_analysis_dir = os.path.join(os.path.abspath(os.path.dirname(__file__)), '..', "replays-analysis")
-        replay_base_name = os.path.splitext(filename)[0]
-        
-        config = configparser.ConfigParser(interpolation=None)
-        config.read(os.path.join(os.path.abspath(os.path.dirname(__file__)), '..', 'config', 'config.ini'))
-        timestamp_format = config.get('Analyzer', 'TimestampFormat', fallback='%Y-%m-%d_%H-%M-%S')
-        
-        timestamp = datetime.datetime.now().strftime(timestamp_format)
-        
-        current_analysis_dir = os.path.join(base_analysis_dir, replay_base_name, timestamp)
-        os.makedirs(current_analysis_dir, exist_ok=True)
-        
-        parser_db_name = f"{replay_base_name}.parser-v1.0.db"
-        db_path = os.path.join(current_analysis_dir, parser_db_name)
-        
-        parse_replay(replay_path, db_path)
-        analyze_replay(db_path, current_analysis_dir)
-        
-        # --- Read results ---
-        alerts = []
-        alerts_file_path = os.path.join(current_analysis_dir, 'alerts.json')
-        if os.path.exists(alerts_file_path):
-            with open(alerts_file_path, 'r') as f:
-                alerts = f.read()
+        # Run the analysis using the core service
+        results = run_full_analysis(replay_path)
 
-        return render_template('results.html', alerts=alerts, replay_name=filename)
+        return render_template('results.html', 
+                               alerts=results['alerts'], 
+                               replay_name=results['replay_name'],
+                               players=results['players'],
+                               teams=results['teams'],
+                               player_stats=results['player_stats'],
+                               build_orders=results['build_orders'],
+                               charts=results['charts'])
 
     return redirect(url_for('index'))
 
+@app.route('/replays-analysis/<path:filename>')
+def serve_analysis_file(filename):
+    return send_from_directory(ANALYSIS_FOLDER, filename)
+
 if __name__ == '__main__':
     app.run(debug=True)
+

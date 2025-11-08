@@ -1,3 +1,4 @@
+# Parser Version: 1.1
 import sc2reader
 from sc2reader.engine.plugins import APMTracker
 import sqlite3
@@ -10,7 +11,7 @@ def init_db(db_path):
 
     if os.path.exists(db_path):
         os.remove(db_path)
-    schema_path = os.path.join(os.path.dirname(__file__), "parser_v1_0_schema.sql")
+    schema_path = os.path.join(os.path.dirname(__file__), "parser_v1_1_schema.sql")
     with open(schema_path, "r") as f:
         schema = f.read()
     conn = sqlite3.connect(db_path)
@@ -174,6 +175,36 @@ def parse_replay(replay_path, db_path):
                     event.control_group,
                     action_type,
                     selected_unit_ids
+                ))
+        
+        elif event.name == "PlayerStatsEvent":
+            cursor.execute("""
+                INSERT INTO player_stats_events (player_id, timeline_id, minerals_collection_rate, vespene_collection_rate, workers_active_count, food_used, food_made)
+                VALUES (?, ?, ?, ?, ?, ?, ?)
+            """, (
+                event.player.pid,
+                tick_map.get(event.frame, 0),
+                event.minerals_collection_rate,
+                event.vespene_collection_rate,
+                event.workers_active_count,
+                event.food_used,
+                event.food_made
+            ))
+        
+        elif event.name == "UnitDiedEvent":
+            # Only record if the unit had an owner
+            if event.unit.owner:
+                cursor.execute("""
+                    INSERT INTO unit_deaths (unit_id, killer_id, player_id, timeline_id, unit_name, x, y)
+                    VALUES (?, ?, ?, ?, ?, ?, ?)
+                """, (
+                    event.unit_id,
+                    event.killer_id,
+                    event.unit.owner.pid,
+                    tick_map.get(event.frame, 0),
+                    event.unit.name,
+                    event.unit.location[0],
+                    event.unit.location[1]
                 ))
 
     # Upgrades
