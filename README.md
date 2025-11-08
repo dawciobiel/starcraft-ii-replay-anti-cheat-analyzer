@@ -54,13 +54,23 @@ Zainstaluj zależności:
 
 ## 🧪 Przykład użycia
 
-### Parsuj replay i uruchom analizę
+### Uruchomienie interfejsu webowego
+1.  Upewnij się, że masz aktywne środowisko wirtualne.
+2.  Uruchom serwer Flask:
+    ```bash
+    python webapp/app.py
+    ```
+3.  Otwórz przeglądarkę i wejdź na adres: `http://127.0.0.1:5000`
+
+### Użycie z wiersza poleceń (CLI)
+
+#### Parsuj replay i uruchom analizę
 `   python cli.py replays/game.SC2Replay --analyze`
 
-### Parsuj replay i pokaż wizualizację kamery gracza #1
+#### Parsuj replay i pokaż wizualizację kamery gracza #1
 `   python cli.py replays/game.SC2Replay --visualize 1`
 
-### Tylko parsuj replay
+#### Tylko parsuj replay
 `   python cli.py replays/game.SC2Replay`
 
 ## 📜 Licencja
