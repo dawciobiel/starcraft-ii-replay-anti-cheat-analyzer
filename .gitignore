@@ -1,4 +1,7 @@
+# Replay and analysis files
+replays/
 replays-analysis/
+replays-backup/
 
 # Python
 __pycache__/
