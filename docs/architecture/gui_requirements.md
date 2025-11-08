@@ -12,7 +12,7 @@ Interfejs powinien być raczej złożony i zawierać następujące elementy:
 
 ### a) Formularz wyboru pliku replay
 *   **[Zaimplementowane]** Pole do wskazania pliku `.SC2Replay`.
-*   **[Do zrobienia]** Opcje wyboru: "Analiza" i "Wizualizacja" (domyślnie obie zaznaczone).
+*   **[Zaimplementowane]** Opcje wyboru: "Analiza" i "Wizualizacja" (domyślnie obie zaznaczone).
 
 ### b) Informacje o replayu
 *   **[Zaimplementowane]** **Tabela "Drużyny":**
@@ -30,21 +30,21 @@ Interfejs powinien być raczej złożony i zawierać następujące elementy:
 *   **[Zaimplementowane]** Średnia wartość EPM w całym meczu
 *   **[Zaimplementowane]** Łączna ilość wybudowanych robotników [SCV / drone / probe]
 *   **[Zaimplementowane]** Ilość wybudowanych jednostek bojowych w czasie całego meczu
-*   **[Do zrobienia]** Ilość zniszczonych jednostek wroga w czasie całego meczu
+*   **[Zaimplementowane]** Ilość zniszczonych jednostek wroga w czasie całego meczu
 *   **[Zaimplementowane]** Ilość wybudowanych budynków w czasie całego meczu
-*   **[Do zrobienia]** Ilość zniszczonych jednostek wroga w czasie całego meczu
+*   **[Zaimplementowane]** Ilość zniszczonych jednostek wroga w czasie całego meczu
 *   **[Zaimplementowane (tymczasowo wyłączone)]** **Build order poszczególnych graczy w ciągu całego meczu:**
     *   Time in seconds
     *   Action (builded unit or stucture or started researching upgrade)
-    *   **[Do zrobienia]** Own supply limit of units
+    *   **[Zaimplementowane]** Own supply limit of units
 *   **Wykresy:**
     *   **[Zaimplementowane]** Army Value [value / elapsed game time]
     *   **[Zaimplementowane]** Workers active / Elapsed game time
-    *   **[Zaimplementowane]** Resource collection rate [Resource collection rate / Elapsed game time]
-    *   **[Do zrobienia]** Upgrade spending [upgrade spending / elapsed game time]
+    *   **[Zaimplementowane]** Resource collection rate [Resource collection rate / elapsed game time]
+    *   **[Zaimplementowane]** Upgrade spending [upgrade spending / elapsed game time]
 
 ## 4. Dostępność danych
-Do zastanowienia.
+*   Dane o kosztach jednostek i ulepszeń przeniesione do `config/costs.ini`.
 
 ## 5. Wymagania dotyczące instalacji
 *   Uruchomienie lokalnego serwera Flask.
