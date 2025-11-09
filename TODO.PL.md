@@ -14,4 +14,4 @@
 - [x] Implementacja brakujących wykresów (np. "wydatki na ulepszenia").
 - [x] Dodanie opcji wyboru "Analiza" i "Wizualizacja" w formularzu przesyłania.
 - [ ] Aplikacja powinna mieć możliwość zdalnej obsługi za pomocą protokołu HTTP/HTTPS.
-- [ ] Zaimplementuj reguły anty-cheat opisane w katalogu `docs/detection_procedures/`.
+- [x] Zaimplementuj reguły anty-cheat opisane w katalogu `docs/detection_procedures/`.
