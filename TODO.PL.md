@@ -1,11 +1,7 @@
 # TODO
 
 ## Architektura kodu
-- [x] Refaktoryzacja logiki biznesowej do oddzielnego modułu `core`.
-- [x] Wersjonowanie parsera i schematu bazy danych.
-- [x] Przeniesienie kosztów jednostek i ulepszeń do pliku konfiguracyjnego.
-- [ ] Zastanów się nad ewentualnym użyciem Nuitka w celu ochrony kodu źródłowego.
-- [ ] Wybierz odpowiednią licencję dla projektu.
+- [ ] Zastanów się nad ewentualnym użyciem Nuitka w celu ochrony kodu źródłowego (bardziej istotne dla aplikacji desktopowych).
 
 ## Funkcjonalności
 - [x] Implementacja interfejsu webowego (Flask) do analizy powtórek.
@@ -15,3 +11,4 @@
 - [x] Dodanie opcji wyboru "Analiza" i "Wizualizacja" w formularzu przesyłania.
 - [ ] Aplikacja powinna mieć możliwość zdalnej obsługi za pomocą protokołu HTTP/HTTPS.
 - [x] Zaimplementuj reguły anty-cheat opisane w katalogu `docs/detection_procedures/`.
+- [ ] Stylizacja interfejsu webowego w stylu StarCraft II.
