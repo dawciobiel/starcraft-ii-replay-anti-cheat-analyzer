@@ -103,3 +103,30 @@ Podsumowanie sesji z dnia 6 listopada 2025 (kontynuacja):
     - Przeanalizowano doświadczenie i preferencje technologiczne (Python/PyQt vs Java/JavaFX).
     - Zaproponowano PyQt jako technologię GUI ze względu na cross-platformowość, bogaty zestaw widżetów, integrację z Pythonem i wydajność.
     - Punkt dotyczący skalowalności i dostępności (wielu użytkowników vs pojedyncze osoby) został odłożony do dalszego przemyślenia.
+
+Podsumowanie sesji z dnia 8 listopada 2025:
+- **Implementacja interfejsu webowego (Flask):**
+    - Stworzono aplikację webową opartą na Flask (`webapp/`).
+    - Zaimplementowano przesyłanie plików `.SC2Replay`.
+    - Wyświetlono podstawowe informacje o powtórce (drużyny, lista graczy).
+    - Wyświetlono statystyki graczy (APM, EPM, wybudowani robotnicy, wybudowane struktury, wybudowane jednostki bojowe, zniszczone jednostki wroga).
+    - Wyświetlono kolejność budowy z limitem zaopatrzenia.
+    - Wyświetlono wykresy: Aktywni robotnicy, Tempo zbierania zasobów, Wartość armii, Wydatki na ulepszenia.
+    - Dodano opcje interfejsu użytkownika "Analiza" i "Wizualizacja" w formularzu przesyłania.
+    - Zaimplementowano zwijane sekcje dla lepszego UX.
+- **Architektura:**
+    - Zrefaktoryzowano logikę rdzenia do `core/analysis_service.py`.
+    - Zaktualizowano `webapp/app.py` do korzystania z nowej usługi.
+- **Parser i schemat:**
+    - Wersjonowano pliki parsera i schematu do `v1.1`.
+    - Zaktualizowano `parser/parser_v1_1.py` do przetwarzania `PlayerStatsEvent` i `UnitDiedEvent` (w tym `killer_player_id`).
+    - Zaktualizowano `parser/parser_v1_1_schema.sql` o tabele `player_stats_events` i `unit_deaths`.
+- **Konfiguracja:**
+    - Przeniesiono koszty jednostek i ulepszeń do `config/costs.ini`.
+- **Dokumentacja:**
+    - Zaktualizowano `TODO.PL.md`, `docs/architecture/gui_requirements.md` i `README.md` do odzwierciedlenia bieżącego statusu projektu.
+- **Poprawki błędów:**
+    - Poprawiono wielkość liter `ALLOWED_EXTENSIONS` w `webapp/app.py`.
+    - Poprawiono obsługę ścieżek plików w `webapp/app.py` i `core/analysis_service.py`.
+    - Poprawiono `TypeError` w sygnaturze funkcji `run_full_analysis`.
+    - Poprawiono `AttributeError` w `parser/parser_v1_1.py` związane z `event.killer.owner.pid`.

@@ -36,8 +36,11 @@ def upload_file():
         replay_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
         file.save(replay_path)
 
+        analyze_option = request.form.get('analyze_option') == 'true'
+        visualize_option = request.form.get('visualize_option') == 'true'
+
         # Run the analysis using the core service
-        results = run_full_analysis(replay_path)
+        results = run_full_analysis(replay_path, analyze_option, visualize_option)
 
         return render_template('results.html', 
                                alerts=results['alerts'], 

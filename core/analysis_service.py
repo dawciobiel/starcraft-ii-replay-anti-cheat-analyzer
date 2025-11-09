@@ -13,7 +13,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from parser.parser_v1_1 import parse_replay
 from analyzer.analyzer import analyze_replay
 
-def run_full_analysis(replay_path):
+def run_full_analysis(replay_path, analyze_option=True, visualize_option=True):
     """
     Runs the full analysis pipeline for a given replay file.
     
@@ -89,67 +89,77 @@ def generate_charts(db_path, output_dir):
     charts['workers_active'] = generate_workers_active_chart(db_path, output_dir)
     charts['resource_collection_rate'] = generate_resource_collection_rate_chart(db_path, output_dir)
     charts['army_value'] = generate_army_value_chart(db_path, output_dir)
+    charts['upgrade_spending'] = generate_upgrade_spending_chart(db_path, output_dir)
     return charts
 
-# Define unit costs (simplified for common units)
-UNIT_COSTS = {
-    # Terran
-    'SCV': {'minerals': 50, 'vespene': 0},
-    'Marine': {'minerals': 50, 'vespene': 0},
-    'Marauder': {'minerals': 100, 'vespene': 25},
-    'Reaper': {'minerals': 50, 'vespene': 50},
-    'Ghost': {'minerals': 150, 'vespene': 125},
-    'Hellion': {'minerals': 100, 'vespene': 0},
-    'Hellbat': {'minerals': 100, 'vespene': 0},
-    'SiegeTank': {'minerals': 150, 'vespene': 125},
-    'Thor': {'minerals': 300, 'vespene': 200},
-    'Cyclone': {'minerals': 150, 'vespene': 100},
-    'Viking': {'minerals': 150, 'vespene': 75},
-    'Medivac': {'minerals': 100, 'vespene': 100},
-    'Raven': {'minerals': 100, 'vespene': 200},
-    'Banshee': {'minerals': 150, 'vespene': 100},
-    'Battlecruiser': {'minerals': 400, 'vespene': 300},
+def generate_upgrade_spending_chart(db_path, output_dir):
+    """
+    Generates a chart of upgrade spending over time for all players.
+    """
+    import matplotlib.pyplot as plt
+    
+    costs_config = configparser.ConfigParser()
+    costs_config.read(os.path.join(os.path.abspath(os.path.dirname(__file__)), '..', 'config', 'costs.ini'))
 
-    # Zerg
-    'Drone': {'minerals': 50, 'vespene': 0},
-    'Zergling': {'minerals': 25, 'vespene': 0},
-    'Baneling': {'minerals': 25, 'vespene': 25}, # from Zergling
-    'Roach': {'minerals': 75, 'vespene': 25},
-    'Ravager': {'minerals': 25, 'vespene': 25}, # from Roach
-    'Hydralisk': {'minerals': 100, 'vespene': 50},
-    'Lurker': {'minerals': 50, 'vespene': 100}, # from Hydralisk
-    'Mutalisk': {'minerals': 100, 'vespene': 100},
-    'Corruptor': {'minerals': 150, 'vespene': 100},
-    'BroodLord': {'minerals': 150, 'vespene': 150}, # from Corruptor
-    'Infestor': {'minerals': 100, 'vespene': 150},
-    'SwarmHost': {'minerals': 100, 'vespene': 75},
-    'Ultralisk': {'minerals': 300, 'vespene': 200},
-    'Queen': {'minerals': 150, 'vespene': 0},
+    conn = sqlite3.connect(db_path)
+    conn.row_factory = sqlite3.Row
+    cursor = conn.cursor()
 
-    # Protoss
-    'Probe': {'minerals': 50, 'vespene': 0},
-    'Zealot': {'minerals': 100, 'vespene': 0},
-    'Stalker': {'minerals': 125, 'vespene': 50},
-    'Sentry': {'minerals': 50, 'vespene': 100},
-    'Adept': {'minerals': 100, 'vespene': 25},
-    'HighTemplar': {'minerals': 50, 'vespene': 150},
-    'DarkTemplar': {'minerals': 125, 'vespene': 125},
-    'Immortal': {'minerals': 275, 'vespene': 100},
-    'Disruptor': {'minerals': 150, 'vespene': 150},
-    'Colossus': {'minerals': 300, 'vespene': 200},
-    'Phoenix': {'minerals': 150, 'vespene': 100},
-    'VoidRay': {'minerals': 200, 'vespene': 150},
-    'Oracle': {'minerals': 150, 'vespene': 150},
-    'Tempest': {'minerals': 250, 'vespene': 175},
-    'Carrier': {'minerals': 350, 'vespene': 250},
-    'Mothership': {'minerals': 300, 'vespene': 300},
-}
+    plt.figure(figsize=(10, 6))
+    
+    cursor.execute("SELECT player_id, name FROM players")
+    players = cursor.fetchall()
+
+    for player in players:
+        player_id = player['player_id']
+        
+        cursor.execute("""
+            SELECT completed_at, name
+            FROM upgrades
+            WHERE player_id = ?
+            ORDER BY completed_at
+        """, (player_id,))
+        
+        upgrade_events = cursor.fetchall()
+        
+        time_points = [0]
+        spending_values = [0]
+        current_spending = 0
+        
+        for event in upgrade_events:
+            if costs_config.has_option('UpgradeCosts', event['name']):
+                minerals, vespene = map(int, costs_config.get('UpgradeCosts', event['name']).split(','))
+                total_cost = minerals + vespene
+                current_spending += total_cost
+            
+            time_points.append(event['completed_at'])
+            spending_values.append(current_spending)
+            
+        plt.plot(time_points, spending_values, label=f"Player {player_id} - {player['name']}")
+
+    conn.close()
+
+    plt.title("Upgrade Spending Over Time")
+    plt.xlabel("Time (seconds)")
+    plt.ylabel("Total Spending (Minerals + Vespene)")
+    plt.legend()
+    plt.grid(True)
+    
+    chart_path = os.path.join(output_dir, 'upgrade_spending_chart.png')
+    plt.savefig(chart_path)
+    plt.close()
+    
+    # Return relative path for web display
+    return os.path.join(os.path.basename(os.path.dirname(output_dir)), os.path.basename(output_dir), 'upgrade_spending_chart.png')
 
 def generate_army_value_chart(db_path, output_dir):
     """
     Generates a chart of army value over time for all players.
     """
     import matplotlib.pyplot as plt
+
+    costs_config = configparser.ConfigParser()
+    costs_config.read(os.path.join(os.path.abspath(os.path.dirname(__file__)), '..', 'config', 'costs.ini'))
 
     conn = sqlite3.connect(db_path)
     conn.row_factory = sqlite3.Row
@@ -201,13 +211,14 @@ def generate_army_value_chart(db_path, output_dir):
         current_army_value = 0
 
         for event in all_events:
-            unit_cost = UNIT_COSTS.get(event['unit_name'], {'minerals': 0, 'vespene': 0})
-            total_cost = unit_cost['minerals'] + unit_cost['vespene']
+            if costs_config.has_option('UnitCosts', event['unit_name']):
+                minerals, vespene = map(int, costs_config.get('UnitCosts', event['unit_name']).split(','))
+                total_cost = minerals + vespene
 
-            if event['type'] == 'born':
-                current_army_value += total_cost
-            elif event['type'] == 'died':
-                current_army_value -= total_cost
+                if event['type'] == 'born':
+                    current_army_value += total_cost
+                elif event['type'] == 'died':
+                    current_army_value -= total_cost
             
             time_points.append(event['second'])
             army_values.append(current_army_value)
@@ -377,7 +388,21 @@ def get_build_orders(db_path):
 
         # Combine and sort all events
         all_events = sorted(structures_bo + units_bo + upgrades_bo, key=lambda x: x['second'])
-        build_orders[player_id] = all_events
+
+        # Add supply limit to each event
+        build_order_with_supply = []
+        for event in all_events:
+            cursor.execute("""
+                SELECT food_made FROM player_stats_events
+                WHERE player_id = ? AND timeline_id <= (SELECT timeline_id FROM timeline WHERE second = ?)
+                ORDER BY timeline_id DESC
+                LIMIT 1
+            """, (player_id, event['second']))
+            supply_data = cursor.fetchone()
+            event['supply_limit'] = supply_data['food_made'] if supply_data else 0
+            build_order_with_supply.append(event)
+
+        build_orders[player_id] = build_order_with_supply
     
     conn.close()
     return build_orders
@@ -449,6 +474,13 @@ def get_player_stats(db_path):
                 WHERE player_id = ? AND name IN ({','.join(['?' for _ in combat_unit_names])})
             """, (player_id, *combat_unit_names))
             player_stats[player_id]['combat_units_built'] = cursor.fetchone()[0]
+
+        # Count enemy units destroyed
+        cursor.execute("""
+            SELECT COUNT(*) FROM unit_deaths
+            WHERE killer_player_id = ? AND player_id != ?
+        """, (player_id, player_id))
+        player_stats[player_id]['enemy_units_destroyed'] = cursor.fetchone()[0]
     
     conn.close()
     return player_stats

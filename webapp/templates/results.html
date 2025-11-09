@@ -5,76 +5,82 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Analysis Results</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="{{ url_for('static', filename='main.js') }}"></script>
 </head>
 <body>
     <h1>Analysis for {{ replay_name }}</h1>
 
-    <h2>Replay Information</h2>
-    
-    <h3>Teams</h3>
-    {% for team_id, team_players in teams.items() %}
-        <h4>Team {{ team_id }}</h4>
-        <ul>
-            {% for player in team_players %}
-                <li>{{ player.name }} ({{ player.race }})</li>
-            {% endfor %}
-        </ul>
-    {% endfor %}
+    <button type="button" class="collapsible">Replay Information</button>
+    <div class="content">
+        <h3>Teams</h3>
+        {% for team_id, team_players in teams.items() %}
+            <h4>Team {{ team_id }}</h4>
+            <ul>
+                {% for player in team_players %}
+                    <li>{{ player.name }} ({{ player.race }})</li>
+                {% endfor %}
+            </ul>
+        {% endfor %}
 
-    <h3>Player List</h3>
-    <table>
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Name</th>
-                <th>Toon ID</th>
-                <th>Battle.net URL</th>
-                <th>Race</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for player in players %}
+        <h3>Player List</h3>
+        <table>
+            <thead>
                 <tr>
-                    <td>{{ player.player_id }}</td>
-                    <td>{{ player.name }}</td>
-                    <td>{{ player.toon_id }}</td>
-                    <td><a href="{{ player.bnet_url }}" target="_blank">{{ player.bnet_url }}</a></td>
-                    <td>{{ player.race }}</td>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Toon ID</th>
+                    <th>Battle.net URL</th>
+                    <th>Race</th>
                 </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-
-    <h2>Player Statistics</h2>
-    <table>
-        <thead>
-            <tr>
-                <th>Player ID</th>
-                <th>Name</th>
-                <th>Average APM</th>
-                <th>Average EPM</th>
-                <th>Workers Built</th>
-                <th>Structures Built</th>
-                <th>Combat Units Built</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for player_id, stats in player_stats.items() %}
-                <tr>
-                    <td>{{ player_id }}</td>
-                    <td>{{ stats.name }}</td>
-                    <td>{{ stats.avg_apm }}</td>
-                    <td>{{ stats.avg_epm }}</td>
-                    <td>{{ stats.workers_built }}</td>
-                    <td>{{ stats.structures_built }}</td>
-                    <td>{{ stats.combat_units_built }}</td>
-                </tr>
-            {% endfor %}
-        </tbody>
+            </thead>
+            <tbody>
+                {% for player in players %}
+                    <tr>
+                        <td>{{ player.player_id }}</td>
+                        <td>{{ player.name }}</td>
+                        <td>{{ player.toon_id }}</td>
+                        <td><a href="{{ player.bnet_url }}" target="_blank">{{ player.bnet_url }}</a></td>
+                        <td>{{ player.race }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
         </table>
-    
-        {#
-        <h2>Build Orders</h2>
+    </div>
+
+    <button type="button" class="collapsible">Player Statistics</button>
+    <div class="content">
+        <table>
+            <thead>
+                <tr>
+                    <th>Player ID</th>
+                    <th>Name</th>
+                    <th>Average APM</th>
+                    <th>Average EPM</th>
+                    <th>Workers Built</th>
+                    <th>Structures Built</th>
+                    <th>Combat Units Built</th>
+                    <th>Enemy Units Destroyed</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for player_id, stats in player_stats.items() %}
+                    <tr>
+                        <td>{{ player_id }}</td>
+                        <td>{{ stats.name }}</td>
+                        <td>{{ stats.avg_apm }}</td>
+                        <td>{{ stats.avg_epm }}</td>
+                        <td>{{ stats.workers_built }}</td>
+                        <td>{{ stats.structures_built }}</td>
+                        <td>{{ stats.combat_units_built }}</td>
+                        <td>{{ stats.enemy_units_destroyed }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <button type="button" class="collapsible">Build Orders</button>
+    <div class="content">
         {% for player_id, build_order in build_orders.items() %}
             <h3>Player {{ player_id }} - {{ player_stats[player_id].name }}</h3>
             {% if build_order %}
@@ -83,6 +89,7 @@
                         <tr>
                             <th>Time (s)</th>
                             <th>Action</th>
+                            <th>Supply Limit</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -90,6 +97,7 @@
                             <tr>
                                 <td>{{ event.second }}</td>
                                 <td>{{ event.action }}</td>
+                                <td>{{ event.supply_limit }}</td>
                             </tr>
                         {% endfor %}
                     </tbody>
@@ -98,65 +106,57 @@
                 <p>No build order data available for this player.</p>
             {% endif %}
         {% endfor %}
-        #}
-    
-            <h2>Charts</h2>
-    
-            {% if charts.workers_active %}
-    
-                <h3>Active Workers Over Time</h3>
-    
-                <img src="{{ url_for('serve_analysis_file', filename=charts.workers_active) }}" alt="Active Workers Chart">
-    
-            {% endif %}
-    
-            {% if charts.resource_collection_rate %}
-    
-                <h3>Resource Collection Rate Over Time</h3>
-    
-                        <img src="{{ url_for('serve_analysis_file', filename=charts.resource_collection_rate) }}" alt="Resource Collection Rate Chart">
-    
-                    {% endif %}
-    
-                    {% if charts.army_value %}
-    
-                        <h3>Army Value Over Time</h3>
-    
-                        <img src="{{ url_for('serve_analysis_file', filename=charts.army_value) }}" alt="Army Value Chart">
-    
-                    {% endif %}
-    
-                    
-    
-                    <h2>Alerts</h2>
-    
-                    {% if alerts %}
-    
-                        <table>
-    
-                            <thead>
-                <tr>
-                    <th>Player ID</th>
-                    <th>Tick</th>
-                    <th>Type</th>
-                    <th>Description</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for alert in alerts %}
+    </div>
+
+    <button type="button" class="collapsible">Charts</button>
+    <div class="content">
+        {% if charts.workers_active %}
+            <h3>Active Workers Over Time</h3>
+            <img src="{{ url_for('serve_analysis_file', filename=charts.workers_active) }}" alt="Active Workers Chart">
+        {% endif %}
+        {% if charts.resource_collection_rate %}
+            <h3>Resource Collection Rate Over Time</h3>
+            <img src="{{ url_for('serve_analysis_file', filename=charts.resource_collection_rate) }}" alt="Resource Collection Rate Chart">
+        {% endif %}
+        {% if charts.army_value %}
+            <h3>Army Value Over Time</h3>
+            <img src="{{ url_for('serve_analysis_file', filename=charts.army_value) }}" alt="Army Value Chart">
+        {% endif %}
+        {% if charts.upgrade_spending %}
+            <h3>Upgrade Spending Over Time</h3>
+            <img src="{{ url_for('serve_analysis_file', filename=charts.upgrade_spending) }}" alt="Upgrade Spending Chart">
+        {% endif %}
+    </div>
+
+    <button type="button" class="collapsible">Alerts</button>
+    <div class="content">
+        {% if alerts %}
+            <table>
+                <thead>
                     <tr>
-                        <td>{{ alert.player_id }}</td>
-                        <td>{{ alert.tick }}</td>
-                        <td>{{ alert.type }}</td>
-                        <td>{{ alert.description }}</td>
+                        <th>Player ID</th>
+                        <th>Tick</th>
+                        <th>Type</th>
+                        <th>Description</th>
                     </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    {% else %}
-        <p>No alerts generated.</p>
-    {% endif %}
+                </thead>
+                <tbody>
+                    {% for alert in alerts %}
+                        <tr>
+                            <td>{{ alert.player_id }}</td>
+                            <td>{{ alert.tick }}</td>
+                            <td>{{ alert.type }}</td>
+                            <td>{{ alert.description }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>No alerts generated.</p>
+        {% endif %}
+    </div>
 
     <a href="/">Analyze another replay</a>
 </body>
 </html>
+

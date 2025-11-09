@@ -8,8 +8,12 @@
 <body>
     <h1>Upload a Replay File</h1>
     <form action="/upload" method="post" enctype="multipart/form-data">
-        <input type="file" name="replay_file" accept=".SC2Replay">
-        <button type="submit">Upload and Analyze</button>
+        <input type="file" name="replay_file" accept=".SC2Replay"><br><br>
+        <input type="checkbox" id="analyze_option" name="analyze_option" value="true" checked>
+        <label for="analyze_option">Perform Analysis</label><br>
+        <input type="checkbox" id="visualize_option" name="visualize_option" value="true" checked>
+        <label for="visualize_option">Generate Visualizations</label><br><br>
+        <button type="submit">Upload and Process</button>
     </form>
 </body>
 </html>

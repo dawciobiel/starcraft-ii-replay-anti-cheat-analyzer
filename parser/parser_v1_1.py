@@ -194,12 +194,13 @@ def parse_replay(replay_path, db_path):
         elif event.name == "UnitDiedEvent":
             # Only record if the unit had an owner
             if event.unit.owner:
+                killer_player_id = event.killer.pid if event.killer else None
                 cursor.execute("""
-                    INSERT INTO unit_deaths (unit_id, killer_id, player_id, timeline_id, unit_name, x, y)
+                    INSERT INTO unit_deaths (unit_id, killer_player_id, player_id, timeline_id, unit_name, x, y)
                     VALUES (?, ?, ?, ?, ?, ?, ?)
                 """, (
                     event.unit_id,
-                    event.killer_id,
+                    killer_player_id,
                     event.unit.owner.pid,
                     tick_map.get(event.frame, 0),
                     event.unit.name,

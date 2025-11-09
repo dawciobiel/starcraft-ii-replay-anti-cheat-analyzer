@@ -199,7 +199,15 @@ CREATE TABLE player_stats_events (
 
 
 
+
+
+
+
 CREATE TABLE unit_deaths (
+
+
+
+
 
 
 
@@ -207,11 +215,23 @@ CREATE TABLE unit_deaths (
 
 
 
+
+
+
+
     unit_id INTEGER,
 
 
 
-    killer_id INTEGER,
+
+
+
+
+    killer_player_id INTEGER,
+
+
+
+
 
 
 
@@ -219,7 +239,15 @@ CREATE TABLE unit_deaths (
 
 
 
+
+
+
+
     timeline_id INTEGER,
+
+
+
+
 
 
 
@@ -227,7 +255,15 @@ CREATE TABLE unit_deaths (
 
 
 
+
+
+
+
     x INTEGER,
+
+
+
+
 
 
 
@@ -235,11 +271,23 @@ CREATE TABLE unit_deaths (
 
 
 
+
+
+
+
     FOREIGN KEY(player_id) REFERENCES players(player_id),
 
 
 
-    FOREIGN KEY(killer_id) REFERENCES players(player_id),
+
+
+
+
+    FOREIGN KEY(killer_player_id) REFERENCES players(player_id),
+
+
+
+
 
 
 
@@ -247,7 +295,19 @@ CREATE TABLE unit_deaths (
 
 
 
+
+
+
+
 );
+
+
+
+
+
+
+
+
 
 
 
