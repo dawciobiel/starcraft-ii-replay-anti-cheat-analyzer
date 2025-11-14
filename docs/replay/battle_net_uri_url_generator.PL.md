@@ -11,8 +11,10 @@ function buildBattleNetLinks(regionId, realmId, toonId, locale):
           regionId + "/" + realmId + "/" + toonId
 
     # Battle.net URI
+    # Globalny GUID nie jest możliwy do samodzielnego wyliczenia z danych replaya.
+    # Używamy formatu URI opartego na regionId, realmId i toonId.
     uri = "battlenet:://starcraft/profile/" +
-          regionId + "/" + toonId
+          regionId + "/" + realmId + "/" + toonId
 
     return (url, uri)
 ```
@@ -28,16 +30,16 @@ Dane z replaya:
 - `locale = "pl-pl"`
 
 Wynik:
-- **URL** → `https://starcraft2.com/pl-pl/profile/2/1/3744144`  
-- **URI** → `battlenet:://starcraft/profile/2/3744144`
+- **URL** → `https://starcraft2.com/pl-pl/profile/2/1/3744144`
+- **URI** → `battlenet:://starcraft/profile/2/1/3744144`
 
 ---
 
 ## 🌍 Locale (język/region strony)
-- US → `en-us`  
-- EU → `en-gb`, `pl-pl`, `fr-fr`, `de-de`  
-- KR/TW → `ko-kr`, `zh-tw`  
-- CN → `zh-cn`  
+- US → `en-us`
+- EU → `en-gb`, `pl-pl`, `fr-fr`, `de-de`
+- KR/TW → `ko-kr`, `zh-tw`
+- CN → `zh-cn`
 
 ---
 

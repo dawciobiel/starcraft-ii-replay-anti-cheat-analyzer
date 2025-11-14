@@ -14,40 +14,25 @@
 ---
 
 ## 🔍 Jak powstaje GUID
-- Ten długi numer to **zakodowana wersja krótkiego toonId + realmId + regionId**.  
-- Battle.net używa wewnętrznego algorytmu, który łączy te wartości w jeden 64‑bitowy integer.  
-- Struktura wygląda mniej więcej tak (uproszczony schemat):
-
-```
-GUID = (regionId << 60) + (realmId << 48) + toonId
-```
-
-- `<<` oznacza przesunięcie bitowe w lewo.  
-- Dzięki temu każdy profil w całym Battle.net ma **unikalny globalny numer**, nawet jeśli toonId powtarza się w różnych regionach.  
+- Ten długi numer to **zakodowana wersja krótkiego toonId + realmId + regionId**, jednak dokładny algorytm używany przez Battle.net do łączenia tych wartości w jeden 64-bitowy integer jest **proprietarny i nie jest publicznie znany**.
+- Próby odtworzenia tego algorytmu na podstawie dostępnych danych z replayów nie przyniosły wiarygodnych rezultatów.
+- W związku z tym, nie jest możliwe samodzielne wygenerowanie tego globalnego GUID z danych dostępnych w pliku replay.
 
 ---
 
 ## 📌 Przykład
 Dane z replaya:
-- `regionId = 2` (Europa)  
-- `realmId = 1`  
-- `toonId = 3744144`  
+- `regionId = 2` (Europa)
+- `realmId = 1`
+- `toonId = 3744144`
 
-Obliczenie (uproszczone):
-```
-GUID = (2 << 60) + (1 << 48) + 3744144
-GUID ≈ 18044323943224967168
-```
-
-I to właśnie jest ten długi numer, który widzisz w URI z klienta.
+**Obliczenie globalnego GUID z tych danych nie jest możliwe przy użyciu publicznie dostępnych algorytmów.**
+Przykładowy GUID `18044323943224967168` jest wewnętrznym identyfikatorem Battle.net, którego nie da się odtworzyć z prostego wzoru bitowego na podstawie `regionId`, `realmId` i `toonId`.
 
 ---
 
 ## ✨ Podsumowanie
-- **Replay → krótkie toonId** (np. `3744144`)  
-- **Battle.net klient → globalny GUID** (np. `18044323943224967168`)  
-- Oba odnoszą się do tego samego profilu, ale w różnych przestrzeniach identyfikacyjnych.  
-- **URL** wymaga krótkiego toonId + realmId.  
-- **URI** może używać globalnego GUID.  
-
----
+- **Replay → krótkie toonId** (np. `3744144`)
+- **Battle.net klient → globalny GUID** (np. `18044323943224967168`)
+- Oba odnoszą się do tego samego profilu, ale globalny GUID jest wewnętrznym identyfikatorem Battle.net, którego nie jesteśmy w stanie samodzielnie wygenerować.
+- Nasza aplikacja będzie używać formatu URI opartego na `regionId`, `realmId` i `toonId` (np. `battlenet:://starcraft/profile/{regionId}/{realmId}/{toonId}`), ponieważ jest to jedyny wiarygodny sposób na konstruowanie linków z dostępnych danych.
