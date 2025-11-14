@@ -1,15 +1,20 @@
--- Schema Version: 1.1
+-- Schema Version: 1.2
 -- schema.sql
 
 -- 🧑 Players
 CREATE TABLE players (
     player_id INTEGER PRIMARY KEY,
-    name TEXT NOT NULL,
+    player_name TEXT NOT NULL,
+    is_human BOOLEAN,
     toon_id INTEGER,
-    bnet_url TEXT,
+    bnet_uri TEXT,
+    region TEXT,
+    realm TEXT,
     race TEXT,
     team TEXT,
-    color TEXT
+    color TEXT,
+    mmr INTEGER,
+    enemy_workers_killed INTEGER
 );
 
 -- 🕒 Timeline

@@ -1,4 +1,4 @@
-# Parser Version: 1.1
+# Parser Version: 1.3
 import sc2reader
 from sc2reader.engine.plugins import APMTracker
 import sqlite3
@@ -11,7 +11,7 @@ def init_db(db_path):
 
     if os.path.exists(db_path):
         os.remove(db_path)
-    schema_path = os.path.join(os.path.dirname(__file__), "parser_v1_1_schema.sql")
+    schema_path = os.path.join(os.path.dirname(__file__), "parser_v1_3_schema.sql")
     with open(schema_path, "r") as f:
         schema = f.read()
     conn = sqlite3.connect(db_path)
@@ -57,11 +57,24 @@ def parse_replay(replay_path, db_path):
     cursor = conn.cursor()
 
     # Players
+    region_map = {
+        1: "US",
+        2: "EU",
+        3: "KR",
+        5: "CN"
+    }
     for player in replay.players:
+        region_id = getattr(player, 'region_id', 0)
+        realm = getattr(player, 'realm', 0)
+        toon_id = getattr(player, 'toon_id', 0)
+        
+        bnet_uri = f"battlenet:://starcraft/profile/{region_id}/{realm}/{toon_id}"
+        
+        region_name = region_map.get(region_id, "Unknown")
         cursor.execute("""
-            INSERT INTO players (player_id, name, toon_id, bnet_url, race, team, color)
-            VALUES (?, ?, ?, ?, ?, ?, ?)
-        """, (player.pid, player.name, getattr(player, 'toon_id', None), getattr(player, 'url', None), player.play_race, player.team.number, player.color.hex))
+            INSERT INTO players (player_id, player_name, is_human, toon_id, bnet_uri, region, realm, race, team, color, mmr, enemy_workers_killed)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        """, (player.pid, player.name, player.is_human, toon_id, bnet_uri, region_name, realm, player.play_race, player.team.number, player.color.hex, getattr(player, 'mmr', None), 0))
 
     # Timeline
     tick_map = {}
@@ -125,8 +138,11 @@ def parse_replay(replay_path, db_path):
                 tick_map.get(event.frame, 0)
             ))
 
-    # Events (Camera, Selection)
+    # Events (Camera, Selection, UnitDied, Command)
     last_camera_positions = {}
+    worker_unit_names = ["SCV", "Probe", "Drone", "MULE"]
+    enemy_workers_killed_by_player = {player.pid: 0 for player in replay.players}
+
     for event in replay.events:
         if event.name == "CameraEvent":
             last_camera_positions[event.player.pid] = (event.x, event.y)
@@ -207,6 +223,31 @@ def parse_replay(replay_path, db_path):
                     event.unit.location[0],
                     event.unit.location[1]
                 ))
+            
+            if event.unit.owner and event.killer and hasattr(event.killer, 'pid'):
+                if event.unit.name in worker_unit_names and event.unit.owner.pid != event.killer.pid:
+                    enemy_workers_killed_by_player[event.killer.pid] += 1
+
+        elif event.name in ('TargetPointCommandEvent', 'TargetUnitCommandEvent'):
+            cursor.execute("""
+                INSERT INTO command_events (player_id, timeline_id, x, y, ability_name, target_unit_id)
+                VALUES (?, ?, ?, ?, ?, ?)
+            """, (
+                event.player.pid,
+                tick_map.get(event.frame, 0),
+                event.location[0],
+                event.location[1],
+                event.ability_name,
+                getattr(event, 'target_unit_id', None)
+            ))
+
+    # Update players table with enemy_workers_killed
+    for player_id, count in enemy_workers_killed_by_player.items():
+        cursor.execute("""
+            UPDATE players
+            SET enemy_workers_killed = ?
+            WHERE player_id = ?
+        """, (count, player_id))
 
     # Upgrades
     for event in replay.tracker_events:
@@ -218,21 +259,6 @@ def parse_replay(replay_path, db_path):
                 event.player.pid,
                 event.upgrade_type_name,
                 event.second
-            ))
-
-    # Command Events
-    for event in replay.events:
-        if event.name in ('TargetPointCommandEvent', 'TargetUnitCommandEvent'):
-            cursor.execute("""
-                INSERT INTO command_events (player_id, timeline_id, x, y, ability_name, target_unit_id)
-                VALUES (?, ?, ?, ?, ?, ?)
-            """, (
-                event.player.pid,
-                tick_map.get(event.frame, 0),
-                event.location[0],
-                event.location[1],
-                event.ability_name,
-                getattr(event, 'target_unit_id', None)
             ))
 
     # Player APM

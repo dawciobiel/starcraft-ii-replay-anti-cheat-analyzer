@@ -13,6 +13,8 @@ Stores information about each player in the replay.
 - `race`: Player's chosen race (e.g., Terran, Zerg, Protoss).
 - `team`: Player's team number.
 - `color`: Player's in-game color.
+- `mmr`: MMR of the player in this game mode.
+- `enemy_workers_killed`: Enemy workers killed by this player.
 
 ### `timeline`
 Maps game ticks and seconds to a unique timeline ID.

@@ -3,6 +3,9 @@ replays/
 replays-analysis/
 replays-backup/
 
+# External repositories
+webapp/Rsheff-SCII/
+
 # Python
 __pycache__/
 *.pyc

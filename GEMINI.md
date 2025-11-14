@@ -118,9 +118,9 @@ Podsumowanie sesji z dnia 8 listopada 2025:
     - Zrefaktoryzowano logikę rdzenia do `core/analysis_service.py`.
     - Zaktualizowano `webapp/app.py` do korzystania z nowej usługi.
 - **Parser i schemat:**
-    - Wersjonowano pliki parsera i schematu do `v1.1`.
-    - Zaktualizowano `parser/parser_v1_1.py` do przetwarzania `PlayerStatsEvent` i `UnitDiedEvent` (w tym `killer_player_id`).
-    - Zaktualizowano `parser/parser_v1_1_schema.sql` o tabele `player_stats_events` i `unit_deaths`.
+    - Wersjonowano pliki parsera i schematu do `v1.2`.
+    - Zaktualizowano `parser/parser_v1_2.py` do przetwarzania `PlayerStatsEvent` i `UnitDiedEvent` (w tym `killer_player_id`).
+    - Zaktualizowano `parser/parser_v1_2_schema.sql` o tabele `player_stats_events` i `unit_deaths`.
 - **Konfiguracja:**
     - Przeniesiono koszty jednostek i ulepszeń do `config/costs.ini`.
 - **Dokumentacja:**
@@ -129,4 +129,22 @@ Podsumowanie sesji z dnia 8 listopada 2025:
     - Poprawiono wielkość liter `ALLOWED_EXTENSIONS` w `webapp/app.py`.
     - Poprawiono obsługę ścieżek plików w `webapp/app.py` i `core/analysis_service.py`.
     - Poprawiono `TypeError` w sygnaturze funkcji `run_full_analysis`.
-    - Poprawiono `AttributeError` w `parser/parser_v1_1.py` związane z `event.killer.owner.pid`.
+    - Poprawiono `AttributeError` w `parser/parser_v1_1.py` związane z `event.killer.owner.pid`.## Gemini Added Memories
+- Ostatnia sesja zakończyła się na etapie rozbudowy bazy danych o dodatkowe informacje/zdarzenia wyciągane z replaya. W przyszłości będziemy musieli dodać informacje o APM i EPM.
+- W StarCraft II EPM jest zazwyczaj 2-3 razy niższe od APM, ale może się różnić w zależności od gracza.
+- Progress Summary:
+- Confirmed Python virtual environment is active.
+- Verified parsing, analysis, and visualization pipeline with both 'clean' and 'alert-generating' replays.
+- Investigated keyboard/mouse press events and confirmed `sc2reader` provides higher-level game events, not raw input.
+- Confirmed the analyzer has a modular, plugin-like structure.
+- Implemented configurable visualization colors for camera positions, own bases, allied bases, and enemy bases.
+- Corrected the logic for identifying and plotting own, allied, and enemy bases in team games (e.g., 4v4 replays).
+- Successfully tested the updated visualization with `Floodplain.SC2Replay`.
+- Committed the changes.
+
+Key things to remember for future sessions:
+- Always ensure the Python virtual environment is active before starting work.
+- The project uses `replays/1v1_TvP.SC2Replay` for general testing and `replays/to_check_is_Jesus_using_mh.SC2Replay` for testing alert generation. `replays/Floodplain.SC2Replay` is used for testing team game visualizations.
+- The visualization now correctly distinguishes between own, allied, and enemy bases in team games, with configurable colors in `config/config.ini`.
+- Future work might involve further expanding the database with more event types (if `sc2reader` supports them) or developing new analyzer rules.
+- The modular structure of the analyzer is in place, making it easy to add new rules.

@@ -5,7 +5,7 @@ import os
 import datetime
 import configparser
 import sqlite3
-from parser.parser_v1_0 import parse_replay
+from parser.parser_v1_3 import parse_replay
 from analyzer.analyzer import analyze_replay
 from visualizer.visualizer import plot_camera_movements
 
@@ -44,7 +44,7 @@ def main():
     os.makedirs(current_analysis_dir, exist_ok=True)
 
     # Construct the parser's database path
-    parser_db_name = f"{replay_base_name}.parser-v1.0.db" # Assuming v1.0 for now
+    parser_db_name = f"{replay_base_name}.parser-v1.3.db" # Assuming v1.3 for now
     db_path = os.path.join(current_analysis_dir, parser_db_name)
 
     print(f"📥 Parsowanie replaya i zapis do: {db_path}")

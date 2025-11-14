@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Analysis Results</title>
+    <!-- <link rel="stylesheet" href="{{ url_for('static', filename='sc2-theme.css') }}"> -->
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <script src="{{ url_for('static', filename='main.js') }}"></script>
 </head>
@@ -11,13 +12,13 @@
     <h1>Analysis for {{ replay_name }}</h1>
 
     <button type="button" class="collapsible">Replay Information</button>
-    <div class="content">
+    <div class="content" style="display: none;">
         <h3>Teams</h3>
         {% for team_id, team_players in teams.items() %}
             <h4>Team {{ team_id }}</h4>
             <ul>
                 {% for player in team_players %}
-                    <li>{{ player.name }} ({{ player.race }})</li>
+                    <li>{{ player.player_name }} ({{ player.race }})</li>
                 {% endfor %}
             </ul>
         {% endfor %}
@@ -27,20 +28,28 @@
             <thead>
                 <tr>
                     <th>ID</th>
-                    <th>Name</th>
-                    <th>Toon ID</th>
-                    <th>Battle.net URL</th>
+                    <th>Team ID</th>
+                    <th>Color</th>
+                    <th>Display Name</th>
                     <th>Race</th>
+                    <th>is Human</th>
+                    <th>Toon ID</th>
+                    <th>Region</th>
+                    <th>Realm</th>
                 </tr>
             </thead>
             <tbody>
                 {% for player in players %}
                     <tr>
                         <td>{{ player.player_id }}</td>
-                        <td>{{ player.name }}</td>
-                        <td>{{ player.toon_id }}</td>
-                        <td><a href="{{ player.bnet_url }}" target="_blank">{{ player.bnet_url }}</a></td>
+                        <td>{{ player.team }}</td>
+                        <td><span style="color: {{ player.color }}">{{ player.color }}</span></td>
+                        <td>{{ player.player_name }}</td>
                         <td>{{ player.race }}</td>
+                        <td>{{ 'Yes' if player.is_human else 'No' }}</td>
+                        <td>{{ player.toon_id }}</td>
+                        <td>{{ player.region }}</td>
+                        <td>{{ player.realm if player.realm is not none else 'N/A' }}</td>
                     </tr>
                 {% endfor %}
             </tbody>
@@ -48,7 +57,7 @@
     </div>
 
     <button type="button" class="collapsible">Player Statistics</button>
-    <div class="content">
+    <div class="content" style="display: none;">
         <table>
             <thead>
                 <tr>
@@ -79,7 +88,7 @@
         </table>
     </div>
 
-    <button type="button" class="collapsible">Build Orders</button>
+    {# <button type="button" class="collapsible">Build Orders</button>
     <div class="content">
         {% for player_id, build_order in build_orders.items() %}
             <h3>Player {{ player_id }} - {{ player_stats[player_id].name }}</h3>
@@ -106,10 +115,10 @@
                 <p>No build order data available for this player.</p>
             {% endif %}
         {% endfor %}
-    </div>
+    </div> #}
 
     <button type="button" class="collapsible">Charts</button>
-    <div class="content">
+    <div class="content" style="display: none;">
         {% if charts.workers_active %}
             <h3>Active Workers Over Time</h3>
             <img src="{{ url_for('serve_analysis_file', filename=charts.workers_active) }}" alt="Active Workers Chart">
@@ -129,7 +138,7 @@
     </div>
 
     <button type="button" class="collapsible">Alerts</button>
-    <div class="content">
+    <div class="content" style="display: none;">
         {% if alerts %}
             <table>
                 <thead>

@@ -10,7 +10,7 @@ import sys
 # Add the root directory to the Python path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-from parser.parser_v1_1 import parse_replay
+from parser.parser_v1_3 import parse_replay
 from analyzer.analyzer import analyze_replay
 
 def run_full_analysis(replay_path, analyze_option=True, visualize_option=True):
@@ -37,7 +37,7 @@ def run_full_analysis(replay_path, analyze_option=True, visualize_option=True):
     current_analysis_dir = os.path.join(base_analysis_dir, replay_base_name, timestamp)
     os.makedirs(current_analysis_dir, exist_ok=True)
     
-    parser_db_name = f"{replay_base_name}.parser-v1.1.db"
+    parser_db_name = f"{replay_base_name}.parser-v1.3.db"
     db_path = os.path.join(current_analysis_dir, parser_db_name)
     
     # --- Run Parser and Analyzer ---
@@ -62,7 +62,7 @@ def run_full_analysis(replay_path, analyze_option=True, visualize_option=True):
     conn = sqlite3.connect(db_path)
     conn.row_factory = sqlite3.Row
     cursor = conn.cursor()
-    cursor.execute("SELECT * FROM players")
+    cursor.execute("SELECT player_id, player_name, is_human, toon_id, bnet_uri, region, realm, race, team, color, mmr, enemy_workers_killed FROM players")
     players_data = [dict(row) for row in cursor.fetchall()]
     conn.close()
     
@@ -107,7 +107,7 @@ def generate_upgrade_spending_chart(db_path, output_dir):
 
     plt.figure(figsize=(10, 6))
     
-    cursor.execute("SELECT player_id, name FROM players")
+    cursor.execute("SELECT player_id, player_name FROM players")
     players = cursor.fetchall()
 
     for player in players:
@@ -135,7 +135,7 @@ def generate_upgrade_spending_chart(db_path, output_dir):
             time_points.append(event['completed_at'])
             spending_values.append(current_spending)
             
-        plt.plot(time_points, spending_values, label=f"Player {player_id} - {player['name']}")
+        plt.plot(time_points, spending_values, label=f"Player {player_id} - {player['player_name']}")
 
     conn.close()
 
@@ -167,7 +167,7 @@ def generate_army_value_chart(db_path, output_dir):
 
     plt.figure(figsize=(10, 6))
     
-    cursor.execute("SELECT player_id, name FROM players")
+    cursor.execute("SELECT player_id, player_name FROM players")
     players = cursor.fetchall()
 
     max_game_time = 0
@@ -223,7 +223,7 @@ def generate_army_value_chart(db_path, output_dir):
             time_points.append(event['second'])
             army_values.append(current_army_value)
         
-        plt.plot(time_points, army_values, label=f"Player {player_id} - {player['name']}")
+        plt.plot(time_points, army_values, label=f"Player {player_id} - {player['player_name']}")
 
     conn.close()
 
@@ -252,7 +252,7 @@ def generate_resource_collection_rate_chart(db_path, output_dir):
 
     plt.figure(figsize=(10, 6))
     
-    cursor.execute("SELECT player_id, name FROM players")
+    cursor.execute("SELECT player_id, player_name FROM players")
     players = cursor.fetchall()
 
     for player in players:
@@ -272,8 +272,8 @@ def generate_resource_collection_rate_chart(db_path, output_dir):
         minerals_rate = [event['minerals_collection_rate'] for event in stats_events]
         vespene_rate = [event['vespene_collection_rate'] for event in stats_events]
             
-        plt.plot(time_points, minerals_rate, label=f"Player {player_id} - {player['name']} (Minerals)")
-        plt.plot(time_points, vespene_rate, label=f"Player {player_id} - {player['name']} (Vespene)", linestyle='--')
+        plt.plot(time_points, minerals_rate, label=f"Player {player_id} - {player['player_name']} (Minerals)")
+        plt.plot(time_points, vespene_rate, label=f"Player {player_id} - {player['player_name']} (Vespene)", linestyle='--')
 
     conn.close()
 
@@ -302,7 +302,7 @@ def generate_workers_active_chart(db_path, output_dir):
 
     plt.figure(figsize=(10, 6))
     
-    cursor.execute("SELECT player_id, name FROM players")
+    cursor.execute("SELECT player_id, player_name FROM players")
     players = cursor.fetchall()
 
     for player in players:
@@ -327,7 +327,7 @@ def generate_workers_active_chart(db_path, output_dir):
             time_points.append(event['second'])
             worker_counts.append(current_workers)
             
-        plt.plot(time_points, worker_counts, label=f"Player {player_id} - {player['name']}")
+        plt.plot(time_points, worker_counts, label=f"Player {player_id} - {player['player_name']}")
 
     conn.close()
 
@@ -354,7 +354,7 @@ def get_build_orders(db_path):
     cursor = conn.cursor()
 
     build_orders = {}
-    cursor.execute("SELECT player_id, name FROM players")
+    cursor.execute("SELECT player_id, player_name FROM players")
     players = cursor.fetchall()
 
     for player in players:
@@ -416,12 +416,12 @@ def get_player_stats(db_path):
     cursor = conn.cursor()
 
     player_stats = {}
-    cursor.execute("SELECT player_id, name FROM players")
+    cursor.execute("SELECT player_id, player_name FROM players")
     players = cursor.fetchall()
 
     for player in players:
         player_id = player['player_id']
-        player_name = player['name']
+        player_name = player['player_name']
 
         # Get average APM and EPM
         cursor.execute("""
